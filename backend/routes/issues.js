@@ -12,8 +12,8 @@ router.get('/', auth, async (req, res) => {
     const issues = await Issue.find().populate('reportedBy', 'name').sort({ upvoteCount: -1, createdAt: -1 });
     res.json(issues);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Issue Create Error:', err);
+    res.status(500).json({ message: 'Server Error', error: err.message });
   }
 });
 
@@ -40,8 +40,8 @@ router.post('/', auth, upload.single('image'), async (req, res) => {
     const issue = await newIssue.save();
     res.json(issue);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Issue Create Error:', err);
+    res.status(500).json({ message: 'Server Error', error: err.message });
   }
 });
 
@@ -65,8 +65,8 @@ router.put('/:id/upvote', auth, async (req, res) => {
     await issue.save();
     res.json(issue);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Issue Create Error:', err);
+    res.status(500).json({ message: 'Server Error', error: err.message });
   }
 });
 
@@ -87,8 +87,8 @@ router.put('/:id/status', auth, async (req, res) => {
     await issue.save();
     res.json(issue);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Issue Create Error:', err);
+    res.status(500).json({ message: 'Server Error', error: err.message });
   }
 });
 

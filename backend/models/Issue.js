@@ -12,9 +12,10 @@ const issueSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Ensure upvoteCount is updated before saving
-issueSchema.pre('save', function(next) {
-  this.upvoteCount = this.upvotes.length;
-  next();
+issueSchema.pre('save', function() {
+  if (this.upvotes) {
+    this.upvoteCount = this.upvotes.length;
+  }
 });
 
 module.exports = mongoose.model('Issue', issueSchema);

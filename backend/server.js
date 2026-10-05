@@ -12,13 +12,35 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Database Connection
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/campfix', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('MongoDB Connected'))
-.catch(err => console.log(err));
+// Database Connection (Serverless Pattern)
+let isConnected = false;
+const connectDB = async () => {
+  if (isConnected) return;
+  try {
+    const uri = process.env.MONGO_URI || 'mongodb://localhost:27017/campfix';
+    const db = await mongoose.connect(uri);
+    isConnected = db.connections[0].readyState === 1;
+    console.log('MongoDB Connected successfully');
+  } catch (err) {
+    console.error('MongoDB Connection Error:', err);
+  }
+};
+
+// Middleware to ensure DB connection before handling routes
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
+
+// Diagnostic route
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    mongoUriExists: !!process.env.MONGO_URI,
+    dbConnected: isConnected 
+  });
+});
+
 
 // Routes
 app.get('/', (req, res) => {

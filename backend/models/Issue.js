@@ -8,7 +8,12 @@ const issueSchema = new mongoose.Schema({
   status: { type: String, enum: ['Pending', 'In Progress', 'Resolved'], default: 'Pending' },
   reportedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   upvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-  upvoteCount: { type: Number, default: 0 }
+  upvoteCount: { type: Number, default: 0 },
+  comments: [{
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    text: { type: String, required: true },
+    date: { type: Date, default: Date.now }
+  }]
 }, { timestamps: true });
 
 // Ensure upvoteCount is updated before saving
